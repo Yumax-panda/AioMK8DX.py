@@ -56,3 +56,37 @@ class MmrChange(TypedDict):
     partnerIds: Optional[list[int]]
     tier: Optional[TierType]
     numTeams: Optional[int]
+
+
+class NameChange(TypedDict):
+    name: str
+    changedOn: str
+
+
+class PlayerDetails(TypedDict):
+    playerId: int
+    name: str
+    mkcId: int
+    countryCode: Optional[str]
+    countryName: Optional[str]
+    switchFc: Optional[str]
+    isHidden: bool
+    season: int
+    mmr: Optional[int]
+    maxMmr: Optional[int]
+    overallRank: Optional[int]
+    eventsPlayed: int
+    winRate: Optional[float]
+    winsLastTen: int
+    lossesLastTen: int
+    gainLossLastTen: Optional[int]
+    largestGain: Optional[int]
+    largestGainTableId: Optional[int]
+    largestLoss: Optional[int]
+    largestLossTableId: Optional[int]
+    averageScore: Optional[float]
+    averageLastTen: Optional[float]
+    partnerAverage: Optional[float]
+    mmrChanges: list[MmrChange]
+    nameHistory: list[NameChange]
+    rank: str
