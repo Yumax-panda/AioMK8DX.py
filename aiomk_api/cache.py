@@ -28,7 +28,6 @@ from typing import (
     Any,
     Callable,
     Coroutine,
-    Optional,
     TYPE_CHECKING,
     TypeVar
 )
