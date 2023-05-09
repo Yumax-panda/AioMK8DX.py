@@ -69,7 +69,7 @@ def cache(coro: CoroutineFunc) -> CoroutineFunc:
         if key in client._cache:
             return client._cache[key]
 
-        result: T = await coro(client, *args, **kwargs)
+        result = await coro(client, *args, **kwargs)
         client._cache.put(key, result)
         return result
 

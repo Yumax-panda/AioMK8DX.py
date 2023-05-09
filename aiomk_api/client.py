@@ -83,7 +83,7 @@ class AioMKClient:
     async def close(self) -> None:
         await self._http.close()
 
-    async def _fetch(self, endpoint: str, cls: Type[T], params: dict = {}) -> Optional[T]:
+    async def _fetch(self, endpoint: str, cls: Type[T], params: dict = {}) -> Union[T, list[T], None]:
         """fetches data from the api and changes it into a class
 
         Parameters
@@ -97,14 +97,17 @@ class AioMKClient:
 
         Returns
         -------
-        Optional[T]
+        Union[T, list[T], None]
             The data as a class
         """
 
         if (data:=await self._http.get(endpoint, params=params)) is None:
             return None
         else:
-            return cls(data)
+            if isinstance(data, list):
+                return [cls(d) for d in data]
+            else:
+                return cls(data)
 
     async def _fetch_many(
         self,
