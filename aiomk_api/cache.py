@@ -31,7 +31,7 @@ from typing import (
     TYPE_CHECKING,
     TypeVar
 )
-from typing_extensions import ParamSpec
+from typing_extensions import TypeAlias, ParamSpec
 
 
 __all__ = (
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 P = ParamSpec("P")
-Key = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
+Key: TypeAlias = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
 
 
 class Cache:
