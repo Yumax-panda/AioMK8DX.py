@@ -24,7 +24,51 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import Optional, TypedDict
+from typing import Literal, Optional, TypedDict
+
+
+ReasonType = Literal[
+    "Placement",
+    "Table",
+    "Penalty",
+    "Strike",
+    "Bonus",
+    "TableDelete",
+    "PenaltyDelete",
+    "StrikeDelete",
+    "BonusDelete",
+]
+
+
+TierType = Literal[
+    "X", "S", "A", "AB", "B", "BC", "C", "CD", "D", "DE", "E", "EF", "F", "FG", "G", "SQ"
+]
+
+
+class MmrChange(TypedDict):
+    changeId: Optional[int]
+    newMmr: int
+    mmrDelta: int
+    reason: ReasonType
+    time: str
+    score: Optional[int]
+    partnerScores: Optional[list[int]]
+    partnerIds: Optional[list[int]]
+    tier: Optional[TierType]
+    numTeams: Optional[int]
+
+
+class NameChange(TypedDict):
+    name: str
+    changedOn: str
+
+
+class PartialPlayer(TypedDict):
+    name: str
+    mkcId: int
+    eventsPlayed: int
+    mmr: Optional[int]
+    discordId: Optional[str]
 
 
 class Player(TypedDict):
@@ -37,3 +81,32 @@ class Player(TypedDict):
     isHidden: bool
     mmr: Optional[int]
     maxMmr: Optional[int]
+
+
+class PlayerDetails(TypedDict):
+    playerId: int
+    name: str
+    mkcId: int
+    countryCode: Optional[str]
+    countryName: Optional[str]
+    switchFc: Optional[str]
+    isHidden: bool
+    season: int
+    mmr: Optional[int]
+    maxMmr: Optional[int]
+    overallRank: Optional[int]
+    eventsPlayed: int
+    winRate: Optional[float]
+    winsLastTen: int
+    lossesLastTen: int
+    gainLossLastTen: Optional[int]
+    largestGain: Optional[int]
+    largestGainTableId: Optional[int]
+    largestLoss: Optional[int]
+    largestLossTableId: Optional[int]
+    averageScore: Optional[float]
+    averageLastTen: Optional[float]
+    partnerAverage: Optional[float]
+    mmrChanges: list[MmrChange]
+    nameHistory: list[NameChange]
+    rank: str
