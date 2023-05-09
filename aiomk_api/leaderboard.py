@@ -22,7 +22,37 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from .change import *
-from .leaderboard import *
-from .player import *
-from .table import *
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from .player import LeaderBoardPlayer
+
+__all__ = (
+    "LeaderBoard",
+)
+
+if TYPE_CHECKING:
+    from .types.leaderboard import LeaderBoard as LeaderBoardPayload
+
+
+class LeaderBoard:
+
+    __slots__ = (
+        "total_players",
+        "data"
+    )
+
+    if TYPE_CHECKING:
+        total_players: int
+        data: list[LeaderBoardPlayer]
+
+    def __init__(self, data: LeaderBoardPayload) -> None:
+        self._update(data)
+
+    def _update(self, data: LeaderBoardPayload) -> None:
+        self.total_players = data["total_players"]
+        self.data = [LeaderBoardPlayer(x) for x in data["data"]]
+
+    def __len__(self) -> int:
+        return len(self.data)
