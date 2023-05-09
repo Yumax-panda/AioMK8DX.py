@@ -60,36 +60,35 @@ class NameChange(TypedDict):
     changedOn: str
 
 
-class PartialPlayer(TypedDict):
+class _MinimalPlayer(TypedDict):
     name: str
+    mmr: Optional[int]
+
+
+class PartialPlayer(_MinimalPlayer):
     mkcId: int
     eventsPlayed: int
-    mmr: Optional[int]
     discordId: Optional[str]
 
 
-class Player(TypedDict):
+class Player(_MinimalPlayer):
     id: int
-    name: str
     mkcId: int
     discordId: Optional[str]
     countryCode: Optional[str]
     switchFc: Optional[str]
     isHidden: bool
-    mmr: Optional[int]
     maxMmr: Optional[int]
 
 
-class PlayerDetails(TypedDict):
+class PlayerDetails(_MinimalPlayer):
     playerId: int
-    name: str
     mkcId: int
     countryCode: Optional[str]
     countryName: Optional[str]
     switchFc: Optional[str]
     isHidden: bool
     season: int
-    mmr: Optional[int]
     maxMmr: Optional[int]
     overallRank: Optional[int]
     eventsPlayed: int
@@ -107,3 +106,19 @@ class PlayerDetails(TypedDict):
     mmrChanges: list[MmrChange]
     nameHistory: list[NameChange]
     rank: str
+
+
+class LeaderBoardPlayer(_MinimalPlayer):
+    id: int
+    winsLastTen: int
+    lossesLastTen: int
+    eventsPlayed: int
+    overallRank: Optional[int]
+    countryCode: Optional[str]
+    maxMmr: Optional[int]
+    winRate: Optional[float]
+    gainLossLastTen: Optional[int]
+    largestGain: Optional[int]
+    largestLoss: Optional[int]
+    maxRank: Optional[str]
+    maxMmrRank: Optional[str]
