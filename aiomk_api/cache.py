@@ -31,6 +31,8 @@ from typing import (
     TYPE_CHECKING,
     TypeVar
 )
+from typing_extensions import ParamSpec
+
 
 __all__ = (
     "Cache",
@@ -41,6 +43,7 @@ if TYPE_CHECKING:
     from .client import AioMKClient
 
 T = TypeVar("T")
+P = ParamSpec("P")
 Key = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
 
 
@@ -54,7 +57,7 @@ class Cache:
         self.data[key] = value
 
 
-def caching_property(coro: Callable[..., Coroutine[Any, Any, T]]) -> Callable[..., Coroutine[Any, Any, T]]:
+def caching_property(coro: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, Coroutine[Any, Any, T]]:
     """A decorator that caches the result of a coroutine.
 
     Parameters
