@@ -37,3 +37,7 @@ class Bonus(TypedDict):
     deletedOn: Optional[str]
     playerId: int
     playerName: str
+
+
+class Penalty(Bonus):
+    is_strike: bool
