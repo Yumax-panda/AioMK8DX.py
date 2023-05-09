@@ -26,6 +26,7 @@ from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING, Union
 
+
 class Search:
 
     __slots__ = (
@@ -85,3 +86,6 @@ class Search:
 
     def __str__(self) -> str:
         return self.query
+
+    def __repr__(self) -> str:
+        return f"<Search {self.query}>"
