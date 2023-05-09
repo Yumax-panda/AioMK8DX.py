@@ -27,6 +27,12 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING, Union
 
 
+__all__ = (
+    "Search",
+    "_to_camel"
+)
+
+
 class Search:
 
     __slots__ = (
@@ -89,3 +95,20 @@ class Search:
 
     def __repr__(self) -> str:
         return f"<Search {self.query}>"
+
+
+def _to_camel(string: str) -> str:
+    """Converts a string to camel case.
+
+    Parameters
+    ----------
+    string: str
+        The string to convert.
+
+    Returns
+    -------
+    str
+        The converted string.
+    """
+
+    return "".join(word.capitalize() for word in string.split("_"))
