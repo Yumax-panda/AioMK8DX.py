@@ -165,3 +165,22 @@ class AioMKClient:
             params['season'] = season
 
         return await self._fetch("player", Player, params)
+
+    @cache
+    async def get_player_details(
+        self,
+        id: Optional[Param] = None,
+        name: Optional[str] = None,
+        season: Optional[Param] = None,
+    ) -> Optional[PlayerDetails]:
+        params = {}
+        if id is not None:
+            params['id'] = id
+        elif name is not None:
+            params['name'] = name
+        else:
+            return None
+        if season is not None:
+            params['season'] = season
+
+        return await self._fetch("player/details", PlayerDetails, params)
