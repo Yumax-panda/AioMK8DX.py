@@ -26,6 +26,8 @@ from __future__ import annotations
 
 from typing import Literal, Optional, TypedDict
 
+from .tier import TierType
+
 
 ReasonType = Literal[
     "Placement",
@@ -37,11 +39,6 @@ ReasonType = Literal[
     "PenaltyDelete",
     "StrikeDelete",
     "BonusDelete",
-]
-
-
-TierType = Literal[
-    "X", "S", "A", "AB", "B", "BC", "C", "CD", "D", "DE", "E", "EF", "F", "FG", "G", "SQ"
 ]
 
 
