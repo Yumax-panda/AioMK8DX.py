@@ -27,7 +27,7 @@ from __future__ import annotations
 from typing import Optional, TypedDict
 
 
-class Bonus(TypedDict):
+class _ChangeBase(TypedDict):
     id: int
     season: int
     awardedOn: str
@@ -39,5 +39,9 @@ class Bonus(TypedDict):
     playerName: str
 
 
-class Penalty(Bonus):
+class Bonus(_ChangeBase):
+    pass
+
+
+class Penalty(_ChangeBase):
     is_strike: bool

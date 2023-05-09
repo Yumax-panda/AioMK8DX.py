@@ -117,7 +117,7 @@ class _MinimalPlayer:
 
     __slots__ = (
         "name",
-        "mmr"
+        "mmr",
     )
 
     if TYPE_CHECKING:
@@ -132,6 +132,8 @@ class _MinimalPlayer:
 class Player(_MinimalPlayer):
 
     __slots__ = (
+        "name",
+        "mmr",
         "id",
         "mkc_id",
         "discord_id",
@@ -142,6 +144,8 @@ class Player(_MinimalPlayer):
     )
 
     if TYPE_CHECKING:
+        name: str
+        mmr: Optional[int]
         id: int
         mkc_id: int
         discord_id: Optional[str]
@@ -167,12 +171,16 @@ class Player(_MinimalPlayer):
 class PartialPlayer(_MinimalPlayer):
 
     __slots__ = (
+        "name",
+        "mmr",
         "mkc_id",
         "events_played",
         "discord_id"
     )
 
     if TYPE_CHECKING:
+        name: str
+        mmr: Optional[int]
         mkc_id: int
         events_played: int
         discord_id: Optional[str]
@@ -190,6 +198,8 @@ class PartialPlayer(_MinimalPlayer):
 class PlayerDetails(_MinimalPlayer):
 
     __slots__ = (
+        "name",
+        "mmr",
         "player_id",
         "mkc_id",
         "country_code",
@@ -217,6 +227,8 @@ class PlayerDetails(_MinimalPlayer):
     )
 
     if TYPE_CHECKING:
+        name: str
+        mmr: Optional[int]
         player_id: int
         mkc_id: int
         country_code: Optional[str]
@@ -276,6 +288,8 @@ class PlayerDetails(_MinimalPlayer):
 class LeaderBoardPlayer(_MinimalPlayer):
 
     __slots__ = (
+        "name",
+        "mmr",
         "id",
         "wins_last_ten",
         "losses_last_ten",
@@ -292,6 +306,8 @@ class LeaderBoardPlayer(_MinimalPlayer):
     )
 
     if TYPE_CHECKING:
+        name: str
+        mmr: Optional[int]
         id: int
         wins_last_ten: int
         losses_last_ten: int
