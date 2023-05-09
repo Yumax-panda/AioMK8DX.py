@@ -42,7 +42,6 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 Key = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
-CoroutineFunc = Callable[..., Coroutine[Any, Any, T]]
 
 class Cache:
     data: dict[Key, Any] = {}
@@ -54,7 +53,7 @@ class Cache:
         self.data[key] = value
 
 
-def caching_property(coro: CoroutineFunc) -> CoroutineFunc:
+def caching_property(coro: Callable[..., Coroutine[Any, Any, T]]) -> Callable[..., Coroutine[Any, Any, T]]:
     """A decorator that caches the result of a coroutine.
 
     Parameters
