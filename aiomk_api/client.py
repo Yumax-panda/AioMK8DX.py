@@ -39,8 +39,13 @@ from .cache import Cache, caching_property
 
 from .change import Bonus, Penalty
 from .leaderboard import LeaderBoard
-from .player import Player, PlayerDetails
+from .player import (
+    Player,
+    PlayerDetails,
+    PartialPlayer
+)
 from .table import Table
+from .utils import Search
 
 
 API_URL: Final[str] = "https://www.mk8dx-lounge.com/api/"
@@ -140,47 +145,102 @@ class AioMKClient:
     @caching_property
     async def get_player(
         self,
-        id: Optional[Param] = None,
+        id: Optional[int] = None,
         name: Optional[str] = None,
-        mkc_id: Optional[Param] = None,
-        discord_id: Optional[Param] = None,
+        mkc_id: Optional[int] = None,
+        discord_id: Optional[int] = None,
         fc: Optional[str] = None,
-        season: Optional[Param] = None,
+        season: Optional[int] = None,
     ) -> Optional[Player]:
 
         params = {}
         if id is not None:
-            params['id'] = id
+            params["id"] = id
         elif name is not None:
-            params['name'] = name
+            params["name"] = name
         elif mkc_id is not None:
-            params['mkcId'] = mkc_id
+            params["mkcId"] = mkc_id
         elif discord_id is not None:
-            params['discordId'] = discord_id
+            params["discordId"] = discord_id
         elif fc is not None:
-            params['fc'] = fc
+            params["fc"] = fc
         else:
             return None
         if season is not None:
-            params['season'] = season
+            params["season"] = season
 
         return await self._fetch("player", Player, params)
 
     @caching_property
     async def get_player_details(
         self,
-        id: Optional[Param] = None,
+        id: Optional[int] = None,
         name: Optional[str] = None,
-        season: Optional[Param] = None,
+        season: Optional[int] = None,
     ) -> Optional[PlayerDetails]:
         params = {}
         if id is not None:
-            params['id'] = id
+            params["id"] = id
         elif name is not None:
-            params['name'] = name
+            params["name"] = name
         else:
             return None
         if season is not None:
-            params['season'] = season
+            params["season"] = season
 
         return await self._fetch("player/details", PlayerDetails, params)
+
+    @caching_property
+    async def get_player_list(
+        self,
+        min_mmr: Optional[int] = None,
+        max_mmr: Optional[int] = None,
+        season: Optional[int] = None,
+    ) -> list[PartialPlayer]:
+        params = {}
+        if min_mmr is not None:
+            params["minMmr"] = min_mmr
+        if max_mmr is not None:
+            params["maxMmr"] = max_mmr
+        if season is not None:
+            params["season"] = season
+
+        if (data:=await self._http.get("player/list", params)) is None:
+            return []
+        else:
+            return [PartialPlayer(player) for player in data["players"]]
+
+    @caching_property
+    async def get_leaderboard(
+        self,
+        season: int,
+        skip: int = 0,
+        page_size: int = 50,
+        search: Union[str, Search, None] = None,
+        country: Optional[str] = None,
+        min_mmr: Optional[int] = None,
+        max_mmr: Optional[int] = None,
+        min_events_played: Optional[int] = None,
+        max_events_played: Optional[int] = None,
+    ) -> Optional[LeaderBoard]:
+
+        params = {
+            "season": season,
+            "skip": skip,
+            "pageSize": page_size,
+        }
+
+        if search:
+            params["search"] = str(search)
+        if country is not None:
+            params["country"] = country
+        if min_mmr is not None:
+            params["minMmr"] = min_mmr
+        if max_mmr is not None:
+            params["maxMmr"] = max_mmr
+        if min_events_played is not None:
+            params["minEventsPlayed"] = min_events_played
+        if max_events_played is not None:
+            params["maxEventsPlayed"] = max_events_played
+
+        return await self._fetch("player/leaderboard", LeaderBoard, params)
