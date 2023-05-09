@@ -167,6 +167,15 @@ class Player(_MinimalPlayer):
         self.is_hidden = data["isHidden"]
         self.max_mmr = data.get("maxMmr")
 
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, Player) and __value.id == self.id
+
+    def __ne__(self, __value: object) -> bool:
+        return not self.__eq__(__value)
+
+    def __hash__(self) -> int:
+        return self.id >> 22
+
 
 class PartialPlayer(_MinimalPlayer):
 
@@ -193,6 +202,15 @@ class PartialPlayer(_MinimalPlayer):
         self.mkc_id = data["mkcId"]
         self.events_played = data["eventsPlayed"]
         self.discord_id = data.get("discordId")
+
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, PartialPlayer) and __value.mkc_id == self.mkc_id
+
+    def __ne__(self, __value: object) -> bool:
+        return not self.__eq__(__value)
+
+    def __hash__(self) -> int:
+        return self.mkc_id >> 22
 
 
 class PlayerDetails(_MinimalPlayer):
@@ -284,6 +302,15 @@ class PlayerDetails(_MinimalPlayer):
         self.name_history = [NameChange(x) for x in data.get("nameHistory", [])]
         self.rank = data["rank"]
 
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, PlayerDetails) and __value.player_id == self.player_id
+
+    def __ne__(self, __value: object) -> bool:
+        return not self.__eq__(__value)
+
+    def __hash__(self) -> int:
+        return self.player_id >> 22
+
 
 class LeaderBoardPlayer(_MinimalPlayer):
 
@@ -340,3 +367,12 @@ class LeaderBoardPlayer(_MinimalPlayer):
         self.largest_loss = data.get("largestLoss")
         self.max_rank = data.get("maxRank")
         self.max_mmr_rank = data.get("maxMmrRank")
+
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, LeaderBoardPlayer) and __value.id == self.id
+
+    def __ne__(self, __value: object) -> bool:
+        return not self.__eq__(__value)
+
+    def __hash__(self) -> int:
+        return self.id >> 22
