@@ -27,6 +27,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .player import LeaderBoardPlayer
+from .utils import _DictBased
 
 __all__ = (
     "LeaderBoard",
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
     from .types.leaderboard import LeaderBoard as LeaderBoardPayload
 
 
-class LeaderBoard:
+class LeaderBoard(_DictBased):
 
     __slots__ = (
         "total_players",
@@ -51,8 +52,14 @@ class LeaderBoard:
         self._update(data)
 
     def _update(self, data: LeaderBoardPayload) -> None:
-        self.total_players = data["total_players"]
+        self.total_players = data["totalPlayers"]
         self.data = [LeaderBoardPlayer(x) for x in data["data"]]
 
     def __len__(self) -> int:
         return len(self.data)
+
+    def to_dict(self) -> LeaderBoardPayload:
+        return {
+            "totalPlayers": self.total_players,
+            "data": [x.to_dict() for x in self.data]
+        }
