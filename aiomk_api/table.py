@@ -27,6 +27,8 @@ from __future__ import annotations
 from dateutil.parser import isoparse
 from typing import Optional, TYPE_CHECKING
 
+from .utils import _DictBased, _to_camel
+
 __all__ = (
     "Table",
 )
@@ -42,7 +44,7 @@ if TYPE_CHECKING:
     from .types.tier import TierType
 
 
-class Score:
+class Score(_DictBased):
 
     __slots__ = (
         "score",
@@ -81,8 +83,11 @@ class Score:
         self.prev_mmr = data.get("prevMmr")
         self.new_mmr = data.get("newMmr")
 
+    def to_dict(self) -> ScorePayload:
+        return {_to_camel(attr): getattr(self, attr) for attr in self.__slots__}
 
-class Team:
+
+class Team(_DictBased):
 
     __slots__ = (
         "rank",
@@ -100,8 +105,14 @@ class Team:
         self.rank = data["rank"]
         self.scores = [Score(score) for score in data["scores"]]
 
+    def to_dict(self) -> TeamPayload:
+        return {
+            "rank" : self.rank,
+            "scores" : [score.to_dict() for score in self.scores],
+        }
 
-class Table:
+
+class Table(_DictBased):
 
     __slots__ = (
         "id",
@@ -152,3 +163,17 @@ class Table:
         self.table_message_id = data.get("tableMessageId")
         self.update_message_id = data.get("updateMessageId")
         self.author_id = data.get("authorId")
+
+    def to_dict(self) -> TablePayload:
+        data = {}
+
+        for attr in self.__slots__:
+            if attr in ("created_on", "verified_on", "deleted_on"):
+                dt: Optional[datetime] = getattr(self, attr)
+                data[_to_camel(attr)] = dt.isoformat() if dt is not None else None
+            elif attr == "teams":
+                data["teams"] = [team.to_dict() for team in self.teams]
+            else:
+                data[_to_camel(attr)] = getattr(self, attr)
+
+        return data
