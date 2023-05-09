@@ -24,12 +24,16 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TypedDict
-
-from .player import LeaderBoardPlayer
+from typing import Optional, TypedDict
 
 
-class LeaderBoard(TypedDict):
-    totalPlayers: int
-    data: list[LeaderBoardPlayer]
-
+class Bonus(TypedDict):
+    id: int
+    season: int
+    awardedOn: str
+    prevMmr: int
+    newMmr: int
+    amount: int
+    deletedOn: Optional[str]
+    playerId: int
+    playerName: str
