@@ -8,7 +8,6 @@ with open("README.md", "r") as f:
 
 packages = [
     "aiomk_api",
-    "aiomk_api.utils",
     "aiomk_api.types"
 ]
 

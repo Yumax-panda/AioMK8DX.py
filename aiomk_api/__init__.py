@@ -28,3 +28,4 @@ from .client import *
 from .leaderboard import *
 from .player import *
 from .table import *
+from .utils import *

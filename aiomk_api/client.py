@@ -31,6 +31,7 @@ from typing import (
     Final,
     Optional,
     Type,
+    TYPE_CHECKING,
     TypeVar,
     Union
 )
@@ -47,9 +48,12 @@ from .player import (
 from .table import Table
 from .utils import Search
 
+if TYPE_CHECKING:
+    from datetime import datetime
+
 
 API_URL: Final[str] = "https://www.mk8dx-lounge.com/api/"
-JsonResponse = dict[str, Any]
+Response = Union[list, dict[str, Any]]
 Param = Union[str, int]
 T = TypeVar("T")
 
@@ -62,7 +66,7 @@ class HttpClient:
     async def close(self) -> None:
         await self._session.close()
 
-    async def get(self, endpoint: str, params: dict = {}) -> Optional[JsonResponse]:
+    async def get(self, endpoint: str, params: dict = {}) -> Optional[Response]:
         async with self._session.get(API_URL + endpoint, params=params) as response:
             if response.status != 200:
                 return None
@@ -244,3 +248,86 @@ class AioMKClient:
             params["maxEventsPlayed"] = max_events_played
 
         return await self._fetch("player/leaderboard", LeaderBoard, params)
+
+    @caching_property
+    async def get_table(self, table_id: int) -> Optional[Table]:
+        return await self._fetch("table", Table, {"tableId": table_id})
+
+    @caching_property
+    async def get_tables(
+        self,
+        after: Optional[datetime] = None,
+        before: Optional[datetime] = None,
+        season: Optional[int] = None,
+    ) -> list[Table]:
+        params = {}
+
+        if after is not None:
+            params["from"] = after.isoformat()
+        if before is not None:
+            params["to"] = before.isoformat()
+        if season is not None:
+            params["season"] = season
+
+        if (data:=await self._http.get("table/list", params)) is None:
+            return []
+        else:
+            return [Table(table) for table in data]
+
+    @caching_property
+    async def get_table_unverified(self, season: Optional[int] = None) -> list[Table]:
+        params = {}
+
+        if season is not None:
+            params["season"] = season
+
+        if (data:=await self._http.get("table/unverified", params)) is None:
+            return []
+        else:
+            return [Table(table) for table in data]
+
+    @caching_property
+    async def get_bonus(self, id: int) -> Optional[Bonus]:
+        return await self._fetch("bonus", Bonus, {"id": id})
+
+    @caching_property
+    async def get_bonuses(self, name: str, season: Optional[int] = None) -> list[Bonus]:
+        params = {"name": name}
+
+        if season is not None:
+            params["season"] = season
+
+        if (data:=await self._http.get("bonus/list", params)) is None:
+            return []
+        else:
+            return [Bonus(bonus) for bonus in data]
+
+    @caching_property
+    async def get_penalty(self, id: int) -> Optional[Penalty]:
+        return await self._fetch("penalty", Penalty, {"id": id})
+
+    @caching_property
+    async def get_penalties(
+        self,
+        name: str,
+        is_strike: Optional[bool] = None,
+        after: Optional[datetime] = None,
+        include_deleted: bool = False,
+        season: Optional[int] = None,
+    ) -> list[Penalty]:
+        params = {
+            "name": name,
+            "includeDeleted": include_deleted,
+        }
+
+        if is_strike is not None:
+            params["isStrike"] = is_strike
+        if after is not None:
+            params["from"] = after.isoformat()
+        if season is not None:
+            params["season"] = season
+
+        if (data:=await self._http.get("penalty/list", params)) is None:
+            return []
+        else:
+            return [Penalty(penalty) for penalty in data]
