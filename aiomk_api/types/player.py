@@ -65,12 +65,6 @@ class _MinimalPlayer(TypedDict):
     mmr: Optional[int]
 
 
-class PartialPlayer(_MinimalPlayer):
-    mkcId: int
-    eventsPlayed: int
-    discordId: Optional[str]
-
-
 class Player(_MinimalPlayer):
     id: int
     mkcId: int
@@ -79,6 +73,12 @@ class Player(_MinimalPlayer):
     switchFc: Optional[str]
     isHidden: bool
     maxMmr: Optional[int]
+
+
+class PartialPlayer(_MinimalPlayer):
+    mkcId: int
+    eventsPlayed: int
+    discordId: Optional[str]
 
 
 class PlayerDetails(_MinimalPlayer):
