@@ -70,7 +70,7 @@ def caching_property(coro: Callable[..., Coroutine[Any, Any, T]]) -> Callable[..
 
     async def wrapper(client: AioMKClient, *args: Any, **kwargs: Any) -> T:
         key = (args, frozenset(kwargs.items()))
-        if key in client._cache:
+        if key in client._cache.data:
             return client._cache[key]
 
         result = await coro(client, *args, **kwargs)

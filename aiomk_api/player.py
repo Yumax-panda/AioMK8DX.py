@@ -30,7 +30,7 @@ from typing import Optional, TYPE_CHECKING
 from .utils import _DictBased, _to_camel
 
 __all__ = (
-    "MinimalPlayer",
+    "_MinimalPlayer",
     "PartialPlayer",
     "Player",
     "PlayerDetails",
@@ -238,7 +238,7 @@ class PartialPlayer(_MinimalPlayer, _DictBased):
         return {_to_camel(attr): getattr(self, attr) for attr in self.__slots__}
 
 
-class PlayerDetails(_MinimalPlayer. _DictBased):
+class PlayerDetails(_MinimalPlayer, _DictBased):
 
     __slots__ = (
         "name",

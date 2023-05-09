@@ -69,7 +69,8 @@ class HttpClient:
         self._session = session or ClientSession()
 
     async def close(self) -> None:
-        await self._session.close()
+        if self._session is not None:
+            await self._session.close()
 
     async def get(self, endpoint: str, params: dict = {}) -> Optional[Response]:
         async with self._session.get(API_URL + endpoint, params=params) as response:
