@@ -27,7 +27,9 @@ from __future__ import annotations
 from dateutil.parser import isoparse
 from typing import Optional, TYPE_CHECKING
 
-from .utils import _to_camel
+from aiomk_api.types.change import _ChangeBase as _ChangeBasePayload
+
+from .utils import _DictBased, _to_camel
 
 __all__ = (
     "Bonus",
@@ -44,7 +46,7 @@ if TYPE_CHECKING:
     )
 
 
-class _ChangeBase:
+class _ChangeBase(_DictBased):
 
     __slots__ = (
         "id",
@@ -83,7 +85,7 @@ class _ChangeBase:
         self.player_id = data["playerId"]
         self.player_name = data["playerName"]
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> _ChangeBasePayload:
         """Converts the object to a dict.
 
         Returns
@@ -113,14 +115,14 @@ class _ChangeBase:
 
         return data
 
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.to_dict()}>"
-
 
 class Bonus(_ChangeBase):
 
     def __init__(self, data: BonusPayload) -> None:
         super().__init__(data)
+
+    def to_dict(self) -> BonusPayload:
+        return super().to_dict()
 
 
 class Penalty(_ChangeBase):
@@ -152,4 +154,9 @@ class Penalty(_ChangeBase):
 
     def __init__(self, data: PenaltyPayload) -> None:
         super().__init__(data)
-        self.is_strike = data["is_strike"]
+        self.is_strike = data["isStrike"]
+
+    def to_dict(self) -> PenaltyPayload:
+        data = super().to_dict()
+        data["isStrike"] = self.is_strike
+        return data

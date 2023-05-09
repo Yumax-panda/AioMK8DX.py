@@ -28,9 +28,30 @@ from typing import Optional, TYPE_CHECKING, Union
 
 
 __all__ = (
+    "_DictBased",
     "Search",
     "_to_camel"
 )
+
+
+class _DictBased:
+    """A base class for objects that can be converted to a dictionary."""
+
+    __slots__ = ()
+
+    def to_dict(self) -> dict:
+        """Converts this object to a dictionary.
+
+        Returns
+        -------
+        dict
+            The dictionary.
+        """
+
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {self.to_dict()}>"
 
 
 class Search:

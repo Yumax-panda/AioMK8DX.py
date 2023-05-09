@@ -44,4 +44,4 @@ class Bonus(_ChangeBase):
 
 
 class Penalty(_ChangeBase):
-    is_strike: bool
+    isStrike: bool

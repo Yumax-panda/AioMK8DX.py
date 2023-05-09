@@ -27,6 +27,8 @@ from __future__ import annotations
 from dateutil.parser import isoparse
 from typing import Optional, TYPE_CHECKING
 
+from .utils import _DictBased, _to_camel
+
 __all__ = (
     "MinimalPlayer",
     "PartialPlayer",
@@ -51,7 +53,7 @@ if TYPE_CHECKING:
     from types.tier import TierType
 
 
-class MmrChange:
+class MmrChange(_DictBased):
 
     __slots__ = (
         "change_id",
@@ -93,8 +95,19 @@ class MmrChange:
         self.tier = data.get("tier")
         self.numTeams = data.get("numTeams")
 
+    def to_dict(self) -> MmrChangePayload:
+        data = {}
 
-class NameChange:
+        for attr in self.__slots__:
+            if attr == "time":
+                data["time"] = self.time.isoformat()
+            else:
+                data[_to_camel(attr)] = getattr(self, attr)
+
+        return data
+
+
+class NameChange(_DictBased):
 
     __slots__ = (
         "name",
@@ -111,6 +124,12 @@ class NameChange:
     def _update(self, data: NameChangePayload) -> None:
         self.name = data["name"]
         self.changed_on = isoparse(data["changedOn"])
+
+    def to_dict(self) -> NameChangePayload:
+        return {
+            "name": self.name,
+            "changedOn": self.changed_on.isoformat()
+        }
 
 
 class _MinimalPlayer:
@@ -129,7 +148,7 @@ class _MinimalPlayer:
         self.mmr = data.get("mmr")
 
 
-class Player(_MinimalPlayer):
+class Player(_MinimalPlayer, _DictBased):
 
     __slots__ = (
         "name",
@@ -176,8 +195,11 @@ class Player(_MinimalPlayer):
     def __hash__(self) -> int:
         return self.id >> 22
 
+    def to_dict(self) -> PlayerPayload:
+        return {_to_camel(attr): getattr(self, attr) for attr in self.__slots__}
 
-class PartialPlayer(_MinimalPlayer):
+
+class PartialPlayer(_MinimalPlayer, _DictBased):
 
     __slots__ = (
         "name",
@@ -212,8 +234,11 @@ class PartialPlayer(_MinimalPlayer):
     def __hash__(self) -> int:
         return self.mkc_id >> 22
 
+    def to_dict(self) -> PartialPlayerPayload:
+        return {_to_camel(attr): getattr(self, attr) for attr in self.__slots__}
 
-class PlayerDetails(_MinimalPlayer):
+
+class PlayerDetails(_MinimalPlayer. _DictBased):
 
     __slots__ = (
         "name",
@@ -311,8 +336,18 @@ class PlayerDetails(_MinimalPlayer):
     def __hash__(self) -> int:
         return self.player_id >> 22
 
+    def to_dict(self) -> PlayerDetailsPayload:
+        data = {}
 
-class LeaderBoardPlayer(_MinimalPlayer):
+        for attr in self.__slots__:
+            if attr in ("mmr_changes", "name_history"):
+                data[_to_camel(attr)] = [x.to_dict() for x in getattr(self, attr)]
+            else:
+                data[_to_camel(attr)] = getattr(self, attr)
+
+        return data
+
+class LeaderBoardPlayer(_MinimalPlayer, _DictBased):
 
     __slots__ = (
         "name",
@@ -376,3 +411,6 @@ class LeaderBoardPlayer(_MinimalPlayer):
 
     def __hash__(self) -> int:
         return self.id >> 22
+
+    def to_dict(self) -> LeaderBoardPlayerPayload:
+        return {_to_camel(attr): getattr(self, attr) for attr in self.__slots__}
