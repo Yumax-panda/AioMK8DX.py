@@ -51,6 +51,11 @@ from .utils import Search
 if TYPE_CHECKING:
     from datetime import datetime
 
+__all__ = (
+    "HttpClient",
+    "AioMKClient",
+)
+
 
 API_URL: Final[str] = "https://www.mk8dx-lounge.com/api/"
 Response = Union[list, dict[str, Any]]
