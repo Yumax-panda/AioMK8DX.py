@@ -22,6 +22,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+
 from .cache import *
 from .change import *
 from .client import *

@@ -43,6 +43,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 Key = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
 
+
 class Cache:
     data: dict[Key, Any] = {}
 

@@ -24,11 +24,11 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from aiomk_api import AioMKClient
+import aiomk_api
 import pytest
 
 @pytest.mark.asyncio
 async def test_get_player():
-    async with AioMKClient() as client:
-        player = await client.get_player(name="Kusaan")
+    async with aiomk_api.AioMKClient() as client:
+        player = await client.get_player("kusaan")
         assert player.name == "Kusaan"
