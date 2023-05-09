@@ -35,7 +35,7 @@ from typing import (
     Union
 )
 
-from .cache import cache, Cache
+from .cache import Cache, caching_property
 
 from .change import Bonus, Penalty
 from .leaderboard import LeaderBoard
@@ -140,7 +140,7 @@ class AioMKClient:
 
         return [cls(data) if data is not None else None for data in results]
 
-    @cache
+    @caching_property
     async def get_player(
         self,
         id: Optional[Param] = None,
@@ -169,7 +169,7 @@ class AioMKClient:
 
         return await self._fetch("player", Player, params)
 
-    @cache
+    @caching_property
     async def get_player_details(
         self,
         id: Optional[Param] = None,

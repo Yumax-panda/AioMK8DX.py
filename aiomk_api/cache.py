@@ -32,6 +32,11 @@ from typing import (
     TypeVar
 )
 
+__all__ = (
+    "Cache",
+    "caching_property",
+)
+
 if TYPE_CHECKING:
     from .client import AioMKClient
 
@@ -49,7 +54,7 @@ class Cache:
         self.data[key] = value
 
 
-def cache(coro: CoroutineFunc) -> CoroutineFunc:
+def caching_property(coro: CoroutineFunc) -> CoroutineFunc:
     """A decorator that caches the result of a coroutine.
 
     Parameters
