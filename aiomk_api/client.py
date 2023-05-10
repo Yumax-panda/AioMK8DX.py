@@ -33,6 +33,7 @@ from typing import (
     Type,
     TYPE_CHECKING,
     TypeVar,
+    Sequence,
     Union
 )
 from itertools import zip_longest
@@ -182,16 +183,16 @@ class AioMKClient:
 
         return await self._fetch("player", Player, params)
 
-    @caching_property
     async def get_players(
         self,
-        ids: list[int] = [],
-        names: list[str] = [],
-        mkc_ids: list[int] = [],
-        discord_ids: list[int] = [],
-        fcs: list[str] = [],
+        ids: Sequence[int] = [],
+        names: Sequence[str] = [],
+        mkc_ids: Sequence[int] = [],
+        discord_ids: Sequence[int] = [],
+        fcs: Sequence[str] = [],
         season: int = None,
     ) -> list[Optional[Player]]:
+
         params_list = []
 
         for id, name, mkc_id, discord_id, fc in zip_longest(

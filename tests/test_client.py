@@ -32,3 +32,29 @@ async def test_get_player():
     async with aiomk_api.AioMKClient() as client:
         player = await client.get_player(name="azure_mk")
     assert player.name == "Azure_mk"
+
+@pytest.mark.asyncio
+async def test_get_players():
+    async with aiomk_api.AioMKClient() as client:
+        players = await client.get_players(
+            names=("azure_mk", "yumax_panda")
+        )
+    assert players[0].name == "Azure_mk"
+    assert players[1] is None
+
+@pytest.mark.asyncio
+async def test_get_player_details():
+    async with aiomk_api.AioMKClient() as client:
+        player = await client.get_player_details(name="azure_mk")
+        player2 = await client.get_player_details(name="yumax_panda")
+    assert player.name == "Azure_mk"
+    assert player.mmr == 5998
+    assert player2 is None
+
+@pytest.mark.asyncio
+async def test_get_player_list():
+    async with aiomk_api.AioMKClient() as client:
+        players = await client.get_player_list(min_mmr=16000)
+        players_empty = await client.get_player_list(min_mmr=20000)
+    assert len(players) == 11
+    assert len(players_empty) == 0

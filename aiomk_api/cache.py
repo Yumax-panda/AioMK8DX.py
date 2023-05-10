@@ -50,9 +50,6 @@ Key: TypeAlias = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
 class Cache:
     data: dict[Key, Any] = {}
 
-    def get(self, key: Key) -> Any:
-        return self.data.get(key)
-
     def put(self, key: Key, value: object) -> Any:
         self.data[key] = value
 
@@ -74,7 +71,7 @@ def caching_property(coro: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, C
     async def wrapper(client: AioMKClient, *args: Any, **kwargs: Any) -> T:
         key = (args, frozenset(kwargs.items()))
         if key in client._cache.data:
-            return client._cache[key]
+            return client._cache.data[key]
 
         result = await coro(client, *args, **kwargs)
         client._cache.put(key, result)
