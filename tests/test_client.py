@@ -67,6 +67,17 @@ async def test_get_leaderboard():
         leaderboard_empty = await client.get_leaderboard(8, min_mmr=20000)
         s = Search(discord_id=915185563638833173)
         leaderboard_search = await client.get_leaderboard(8, search=s)
+        leaderboard_search2 = await client.get_leaderboard(8, search=s)
     assert len(leaderboard) == 11
     assert len(leaderboard_empty) == 0
     assert leaderboard_search[0].name == "Azure_mk"
+    assert leaderboard_search == leaderboard_search2
+    assert bool(leaderboard_search)
+
+@pytest.mark.asyncio
+async def test_get_table():
+    async with aiomk_api.AioMKClient() as client:
+        table = await client.get_table(8)
+        table2 = await client.get_table(12345)
+    assert table is None
+    assert table2 is not None

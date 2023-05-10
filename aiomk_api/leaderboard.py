@@ -67,6 +67,12 @@ class LeaderBoard(_DictBased):
     def __iter__(self) -> Iterator[LeaderBoardPlayer]:
         return iter(self.data)
 
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, LeaderBoard) and self.data == __value.data
+
+    def __bool__(self) -> bool:
+        return len(self.data) > 0
+
     def to_dict(self) -> LeaderBoardPayload:
         return {
             "totalPlayers": self.total_players,

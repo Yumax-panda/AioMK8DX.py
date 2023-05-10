@@ -48,7 +48,7 @@ class Team(TypedDict):
 
 class Table(TypedDict):
     id: int
-    score: int
+    season: int
     createdOn: str
     verifiedOn: Optional[str]
     deletedOn: Optional[str]

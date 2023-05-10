@@ -116,7 +116,7 @@ class Table(_DictBased):
 
     __slots__ = (
         "id",
-        "score",
+        "season",
         "created_on",
         "verified_on",
         "deleted_on",
@@ -131,7 +131,7 @@ class Table(_DictBased):
 
     if TYPE_CHECKING:
         id: int
-        score: int
+        season: int
         created_on: datetime
         verified_on: Optional[datetime]
         deleted_on: Optional[datetime]
@@ -148,7 +148,7 @@ class Table(_DictBased):
 
     def _update(self, data: TablePayload) -> None:
         self.id = data["id"]
-        self.score = data["score"]
+        self.season = data["season"]
         self.created_on = isoparse(data["createdOn"])
         self.verified_on = (
             isoparse(data["verifiedOn"]) if data.get("verifiedOn") else None
