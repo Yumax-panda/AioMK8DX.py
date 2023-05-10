@@ -81,7 +81,7 @@ class _ChangeBase(_DictBased):
         self.prev_mmr = data["prevMmr"]
         self.new_mmr = data["newMmr"]
         self.amount = data["amount"]
-        self.deleted_on = isoparse(data["deletedOn"]) if data["deletedOn"] else None
+        self.deleted_on = isoparse(data["deletedOn"]) if data.get("deletedOn") else None
         self.player_id = data["playerId"]
         self.player_name = data["playerName"]
 

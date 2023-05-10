@@ -24,6 +24,8 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+
 from aiomk_api.utils import Search
 import aiomk_api
 import pytest
@@ -81,3 +83,40 @@ async def test_get_table():
         table2 = await client.get_table(12345)
     assert table is None
     assert table2 is not None
+
+@pytest.mark.asyncio
+async def test_get_tables():
+    async with aiomk_api.AioMKClient() as client:
+        tables = await client.get_tables(after=datetime.utcnow()- timedelta(hours=1))
+        tables[0].to_dict()
+    assert tables is not None
+
+@pytest.mark.asyncio
+async def test_get_table_unverified():
+    async with aiomk_api.AioMKClient() as client:
+        table = await client.get_table_unverified(8)
+        table2 = await client.get_table_unverified(12345)
+    assert table is None
+    assert table2 is not None
+
+@pytest.mark.asyncio
+async def test_get_bonus():
+    async with aiomk_api.AioMKClient() as client:
+        bonus = await client.get_bonus(12345)
+        bonus2 = await client.get_bonus(10000000)
+    assert bonus is  not None
+    assert bonus2 is None
+
+@pytest.mark.asyncio
+async def test_get_penalty():
+    async with aiomk_api.AioMKClient() as client:
+        penalty = await client.get_penalty(12345)
+        penalty2 = await client.get_penalty(10000000)
+    assert penalty is  not None
+    assert penalty2 is None
+
+@pytest.mark.asyncio
+async def test_get_penalties():
+    async with aiomk_api.AioMKClient() as client:
+        penalties = await client.get_penalties(name="sukuna", include_deleted=True)
+    assert penalties is not None

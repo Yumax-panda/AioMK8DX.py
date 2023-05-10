@@ -361,7 +361,7 @@ class AioMKClient:
     ) -> list[Penalty]:
         params = {
             "name": name,
-            "includeDeleted": include_deleted,
+            "includeDeleted": str(include_deleted),
         }
 
         if is_strike is not None:
