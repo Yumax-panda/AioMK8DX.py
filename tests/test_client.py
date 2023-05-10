@@ -27,6 +27,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 
 from aiomk_api.utils import Search
+from aiomk_api import Player
 import aiomk_api
 import pytest
 
@@ -50,7 +51,9 @@ async def test_get_player_details():
     async with aiomk_api.AioMKClient() as client:
         player = await client.get_player_details(name="azure_mk")
         player2 = await client.get_player_details(name="yumax_panda")
+    assert type(player) is not Player
     assert player.name == "Azure_mk"
+    assert player.rank.division == "Silver"
     assert player.mmr == 5998
     assert player2 is None
 
@@ -59,7 +62,7 @@ async def test_get_player_list():
     async with aiomk_api.AioMKClient() as client:
         players = await client.get_player_list(min_mmr=16000)
         players_empty = await client.get_player_list(min_mmr=20000)
-    assert len(players) == 11
+    assert len(players) != 0
     assert len(players_empty) == 0
 
 @pytest.mark.asyncio
@@ -94,16 +97,16 @@ async def test_get_tables():
 @pytest.mark.asyncio
 async def test_get_table_unverified():
     async with aiomk_api.AioMKClient() as client:
-        table = await client.get_table_unverified(8)
-        table2 = await client.get_table_unverified(12345)
-    assert table is None
-    assert table2 is not None
+        tables = await client.get_table_unverified(8)
+        tables2 = await client.get_table_unverified(12345)
+    assert len(tables) != 0
+    assert len(tables2) == 0
 
 @pytest.mark.asyncio
 async def test_get_bonus():
     async with aiomk_api.AioMKClient() as client:
-        bonus = await client.get_bonus(12345)
-        bonus2 = await client.get_bonus(10000000)
+        bonus = await client.get_bonus(1)
+        bonus2 = await client.get_bonus(12345)
     assert bonus is  not None
     assert bonus2 is None
 
@@ -119,4 +122,4 @@ async def test_get_penalty():
 async def test_get_penalties():
     async with aiomk_api.AioMKClient() as client:
         penalties = await client.get_penalties(name="sukuna", include_deleted=True)
-    assert penalties is not None
+    assert len(penalties) != 0

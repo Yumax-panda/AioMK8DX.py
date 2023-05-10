@@ -22,13 +22,28 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+from __future__ import annotations
 
-from .cache import *
-from .change import *
-from .client import *
-from .leaderboard import *
-from .player import *
-from .rank import *
-from .table import *
-from .utils import *
+from typing import Optional, TypedDict, Literal
+
+
+Division = Literal[
+    "Grandmaster",
+    "Master",
+    "Diamond",
+    "Ruby",
+    "Sapphire",
+    "Platinum",
+    "Gold",
+    "Silver",
+    "Bronze",
+    "Iron",
+    "Placement",
+    "Unknown"
+]
+
+
+class Rank(TypedDict):
+    division: Division
+    name: str
+    level: Optional[int]

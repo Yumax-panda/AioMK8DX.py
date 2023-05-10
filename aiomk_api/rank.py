@@ -25,56 +25,59 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 from typing import (
-    Any,
-    Callable,
-    Coroutine,
+    Optional,
+    Type,
     TYPE_CHECKING,
     TypeVar
 )
-from typing_extensions import TypeAlias, ParamSpec
 
+from .utils import _DictBased
 
-__all__ = (
-    "Cache",
-    "caching_property",
-)
+T = TypeVar("T", bound="Rank")
+
+__all__ = ("Rank",)
 
 if TYPE_CHECKING:
-    from .client import AioMKClient
-
-T = TypeVar("T")
-P = ParamSpec("P")
-Key: TypeAlias = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
+    from .types.rank import Rank as RankPayload, Division
 
 
-class Cache:
-    data: dict[Key, Any] = {}
+class Rank(_DictBased):
 
-    def put(self, key: Key, value: object) -> Any:
-        self.data[key] = value
+    __slots__ = (
+        "division",
+        "level",
+        "name"
+    )
 
+    if TYPE_CHECKING:
+        division: Division
+        level: Optional[int]
+        name: str
 
-def caching_property(coro: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, Coroutine[Any, Any, T]]:
-    """A decorator that caches the result of a coroutine.
+    def __init__(self, data: RankPayload) -> None:
+        self._update(data)
 
-    Parameters
-    ----------
-    coro: Callable
-        The coroutine to cache.
+    def _update(self, data: RankPayload) -> None:
+        self.division = data["division"]
+        self.level = data.get("level")
+        self.name = data["name"]
 
-    Returns
-    -------
-    Callable
-        The coroutine with caching.
-    """
+    def to_dict(self) -> RankPayload:
+        return {
+            "division": self.division,
+            "level": self.level,
+            "name": self.name
+        }
 
-    async def wrapper(client: AioMKClient, *args: Any, **kwargs: Any) -> T:
-        key = (args, frozenset(kwargs.items()), coro.__qualname__)
-        if key in client._cache.data:
-            return client._cache.data[key]
+    @classmethod
+    def from_nick(cls: Type[T], nick: str) -> T:
+        """Create a rank from a nick."""
+        data: RankPayload = {"name": nick}
 
-        result = await coro(client, *args, **kwargs)
-        client._cache.put(key, result)
-        return result
-
-    return wrapper
+        if ' ' in nick:
+            division, level = nick.split(' ', maxsplit=1)
+            data["division"] = division
+            data["level"] = int(level)
+        else:
+            data["division"] = nick
+        return cls(data)

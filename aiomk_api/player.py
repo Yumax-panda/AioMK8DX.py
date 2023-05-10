@@ -27,6 +27,7 @@ from __future__ import annotations
 from dateutil.parser import isoparse
 from typing import Optional, TYPE_CHECKING
 
+from .rank import Rank
 from .utils import _DictBased, _to_camel
 
 __all__ = (
@@ -50,7 +51,7 @@ if TYPE_CHECKING:
         PartialPlayer as PartialPlayerPayload,
         LeaderBoardPlayer as LeaderBoardPlayerPayload
     )
-    from types.tier import TierType
+    from .types.tier import TierType
 
 
 class MmrChange(_DictBased):
@@ -295,7 +296,7 @@ class PlayerDetails(_MinimalPlayer, _DictBased):
         partner_average: Optional[float]
         mmr_changes: list[MmrChange]
         name_history: list[NameChange]
-        rank: str
+        rank: Rank
 
     def __init__(self, data: PlayerDetailsPayload) -> None:
         self._update(data)
@@ -325,7 +326,7 @@ class PlayerDetails(_MinimalPlayer, _DictBased):
         self.partner_average = data.get("partnerAverage")
         self.mmr_changes = [MmrChange(x) for x in data.get("mmrChanges", [])]
         self.name_history = [NameChange(x) for x in data.get("nameHistory", [])]
-        self.rank = data["rank"]
+        self.rank = Rank.from_nick(data["rank"])
 
     def __eq__(self, __value: object) -> bool:
         return isinstance(__value, PlayerDetails) and __value.player_id == self.player_id
@@ -342,6 +343,8 @@ class PlayerDetails(_MinimalPlayer, _DictBased):
         for attr in self.__slots__:
             if attr in ("mmr_changes", "name_history"):
                 data[_to_camel(attr)] = [x.to_dict() for x in getattr(self, attr)]
+            elif attr == "rank":
+                data["rank"] = self.rank.to_dict()
             else:
                 data[_to_camel(attr)] = getattr(self, attr)
 
@@ -381,8 +384,8 @@ class LeaderBoardPlayer(_MinimalPlayer, _DictBased):
         gain_loss_last_ten: Optional[int]
         largest_gain: Optional[int]
         largest_loss: Optional[int]
-        max_rank: Optional[str]
-        max_mmr_rank: Optional[str]
+        max_rank: Optional[Rank]
+        max_mmr_rank: Optional[Rank]
 
     def __init__(self, data: LeaderBoardPlayerPayload) -> None:
         self._update(data)
@@ -400,8 +403,11 @@ class LeaderBoardPlayer(_MinimalPlayer, _DictBased):
         self.gain_loss_last_ten = data.get("gainLossLastTen")
         self.largest_gain = data.get("largestGain")
         self.largest_loss = data.get("largestLoss")
-        self.max_rank = data.get("maxRank")
-        self.max_mmr_rank = data.get("maxMmrRank")
+
+        for attr in ("max_rank", "max_mmr_rank"):
+
+            if (var:=data.get(_to_camel(attr))) is not None:
+                setattr(self, attr, Rank(var))
 
     def __eq__(self, __value: object) -> bool:
         return isinstance(__value, LeaderBoardPlayer) and __value.id == self.id
@@ -413,4 +419,17 @@ class LeaderBoardPlayer(_MinimalPlayer, _DictBased):
         return self.id >> 22
 
     def to_dict(self) -> LeaderBoardPlayerPayload:
-        return {_to_camel(attr): getattr(self, attr) for attr in self.__slots__}
+        data = {}
+
+        for attr in self.__slots__:
+
+            if attr in ("max_rank", "max_mmr_rank"):
+                var: Optional[Rank] = getattr(self, attr)
+
+                if var is not None:
+                    data[_to_camel(attr)] = var.to_dict()
+                else:
+                    data[_to_camel(attr)] = var
+            else:
+                data[_to_camel(attr)] = getattr(self, attr)
+        return data

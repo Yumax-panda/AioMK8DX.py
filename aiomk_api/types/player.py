@@ -26,6 +26,7 @@ from __future__ import annotations
 
 from typing import Literal, Optional, TypedDict
 
+from .rank import Rank
 from .tier import TierType
 
 
@@ -120,5 +121,5 @@ class LeaderBoardPlayer(_MinimalPlayer):
     gainLossLastTen: Optional[int]
     largestGain: Optional[int]
     largestLoss: Optional[int]
-    maxRank: Optional[str]
-    maxMmrRank: Optional[str]
+    maxRank: Optional[Rank]
+    maxMmrRank: Optional[Rank]
