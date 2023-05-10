@@ -75,6 +75,21 @@ class HttpClient:
             await self._session.close()
 
     async def get(self, endpoint: str, params: dict = {}) -> Optional[Response]:
+        """Gets data from the api
+
+        Parameters
+        ----------
+        endpoint : str
+            The endpoint to get from
+        params : dict, optional
+            Parameters of the request, by default {}
+
+        Returns
+        -------
+        Optional[Response]
+            The data from the api
+        """
+
         async with self._session.get(API_URL + endpoint, params=params) as response:
             if response.status != 200:
                 return None
@@ -142,6 +157,7 @@ class AioMKClient:
             query, by default {}
         return_exceptions : bool, optional
             whether to return exceptions, by default False
+            more info: https://docs.python.org/3/library/asyncio-task.html#asyncio.gather
 
         Returns
         -------
@@ -164,6 +180,28 @@ class AioMKClient:
         fc: Optional[str] = None,
         season: Optional[int] = None,
     ) -> Optional[Player]:
+        """Gets a player from the api
+
+        Parameters
+        ----------
+        id : Optional[int], optional
+            The id of the player, by default None
+        name : Optional[str], optional
+            The name of the player, by default None
+        mkc_id : Optional[int], optional
+            The mkc id of the player, by default None
+        discord_id : Optional[int], optional
+            The discord id of the player, by default None
+        fc : Optional[str], optional
+            The switch friend code of the player, by default None
+        season : Optional[int], optional
+            The season to get the player from, by default None
+
+        Returns
+        -------
+        Optional[Player]
+            If successful, the player, else None
+        """
 
         params = {}
         if id is not None:
@@ -191,7 +229,33 @@ class AioMKClient:
         discord_ids: Sequence[int] = [],
         fcs: Sequence[str] = [],
         season: int = None,
+        return_exceptions: bool = False
     ) -> list[Optional[Player]]:
+        """Gets players from the api. This methods is nearly identical to get_player, but can get multiple players at once
+
+        Parameters
+        ----------
+        ids : Sequence[int], optional
+            The ids of the players, by default []
+        names : Sequence[str], optional
+            The names of the players, by default []
+        mkc_ids : Sequence[int], optional
+            The mkc ids of the players, by default []
+        discord_ids : Sequence[int], optional
+            The discord ids of the players, by default []
+        fcs : Sequence[str], optional
+            The switch friend codes of the players, by default []
+        season : int, optional
+            The season to get the players from, by default None
+        return_exceptions : bool, optional
+            whether to return exceptions, by default False
+            more info: https://docs.python.org/3/library/asyncio-task.html#asyncio.gather
+
+        Returns
+        -------
+        list[Optional[Player]]
+            If successful, the players, else None
+        """
 
         params_list = []
 
@@ -217,7 +281,7 @@ class AioMKClient:
             if season is not None:
                 params["season"] = season
             params_list.append(params)
-        return await self._fetch_many("player", Player, params_list)
+        return await self._fetch_many("player", Player, params_list, return_exceptions=return_exceptions)
 
     @caching_property
     async def get_player_details(
@@ -226,6 +290,23 @@ class AioMKClient:
         name: Optional[str] = None,
         season: Optional[int] = None,
     ) -> Optional[PlayerDetails]:
+        """Gets a player's details from the api
+
+        Parameters
+        ----------
+        id : Optional[int], optional
+            The id of the player, by default None
+        name : Optional[str], optional
+            The name of the player, by default None
+        season : Optional[int], optional
+            The season to get the player from, by default None
+
+        Returns
+        -------
+        Optional[PlayerDetails]
+            If successful, the player's details, else None
+        """
+
         params = {}
         if id is not None:
             params["id"] = id
@@ -245,6 +326,23 @@ class AioMKClient:
         max_mmr: Optional[int] = None,
         season: Optional[int] = None,
     ) -> list[PartialPlayer]:
+        """Gets a list of players from the api
+
+        Parameters
+        ----------
+        min_mmr : Optional[int], optional
+            The minimum mmr of the players, by default None
+        max_mmr : Optional[int], optional
+            The maximum mmr of the players, by default None
+        season : Optional[int], optional
+            The season to get the players from, by default None
+
+        Returns
+        -------
+        list[PartialPlayer]
+            If successful, the players, else empty list
+        """
+
         params = {}
         if min_mmr is not None:
             params["minMmr"] = min_mmr
@@ -271,6 +369,46 @@ class AioMKClient:
         min_events_played: Optional[int] = None,
         max_events_played: Optional[int] = None,
     ) -> Optional[LeaderBoard]:
+        """Gets a leaderboard from the api
+
+        Parameters
+        ----------
+        season : int
+            The season to get the leaderboard from
+        skip : int, optional
+            If specified, the player with the highest MMR is omitted by that number, by default 0
+        page_size : int, optional
+            The number of players to get, by default 50
+            You should set this from 1 to 100
+        search : Union[str, Search, None], optional
+            The search query, by default None
+            You can use the utils.Search class to make a search query.
+            Available search fields: mkc_id, discord_id, switch_friend_code
+        country : Optional[str], optional
+            The country to get the leaderboard from, by default None
+        min_mmr : Optional[int], optional
+            The minimum mmr of the players, by default None
+        max_mmr : Optional[int], optional
+            The maximum mmr of the players, by default None
+        min_events_played : Optional[int], optional
+            The minimum events played of the players, by default None
+        max_events_played : Optional[int], optional
+            The maximum events played of the players, by default None
+
+        Returns
+        -------
+        Optional[LeaderBoard]
+            If successful, the leaderboard, else None
+
+        Examples
+        --------
+        >>> async with AioMKClient() as client:
+        >>>    search = Search(switch_fc="1234-5678-1234")
+        >>>    leaderboard = await client.get_leaderboard(8, search=search)
+        >>>
+        >>>    # You can also use a string instead of a Search object
+        >>>    search = "switch=1234-5678-1234"
+        """
 
         params = {
             "season": season,
@@ -295,6 +433,18 @@ class AioMKClient:
 
     @caching_property
     async def get_table(self, table_id: int) -> Optional[Table]:
+        """Gets a table from the api
+
+        Parameters
+        ----------
+        table_id : int
+            The id of the table
+
+        Returns
+        -------
+        Optional[Table]
+            If successful, the table, else None
+        """
         return await self._fetch("table", Table, {"tableId": table_id})
 
     @caching_property
@@ -304,6 +454,22 @@ class AioMKClient:
         before: Optional[datetime] = None,
         season: Optional[int] = None,
     ) -> list[Table]:
+        """Gets a list of tables from the api
+
+        Parameters
+        ----------
+        after : Optional[datetime], optional
+            The date to get the tables after, by default None. Timezone is UTC.
+        before : Optional[datetime], optional
+            The date to get the tables before, by default None. Timezone is UTC.
+        season : Optional[int], optional
+            The season to get the tables from, by default None
+
+        Returns
+        -------
+        list[Table]
+            If successful, the tables, else empty list
+        """
         params = {}
 
         if after is not None:
@@ -320,6 +486,19 @@ class AioMKClient:
 
     @caching_property
     async def get_table_unverified(self, season: Optional[int] = None) -> list[Table]:
+        """Gets a list of unverified tables from the api
+
+        Parameters
+        ----------
+        season : Optional[int], optional
+            The season to get the tables from, by default None
+
+        Returns
+        -------
+        list[Table]
+            If successful, the tables, else empty list
+        """
+
         params = {}
 
         if season is not None:
@@ -332,10 +511,37 @@ class AioMKClient:
 
     @caching_property
     async def get_bonus(self, id: int) -> Optional[Bonus]:
+        """Gets a bonus from the api
+
+        Parameters
+        ----------
+        id : int
+            The id of the bonus
+
+        Returns
+        -------
+        Optional[Bonus]
+            If successful, the bonus, else None
+        """
         return await self._fetch("bonus", Bonus, {"id": id})
 
     @caching_property
     async def get_bonuses(self, name: str, season: Optional[int] = None) -> list[Bonus]:
+        """Gets a list of bonuses from the api
+
+        Parameters
+        ----------
+        name : str
+            The name of the player who got the bonus
+        season : Optional[int], optional
+            The season to get the bonuses from, by default None
+
+        Returns
+        -------
+        list[Bonus]
+            If successful, the bonuses, else empty list
+        """
+
         params = {"name": name}
 
         if season is not None:
@@ -348,6 +554,19 @@ class AioMKClient:
 
     @caching_property
     async def get_penalty(self, id: int) -> Optional[Penalty]:
+        """Gets a penalty from the api
+
+        Parameters
+        ----------
+        id : int
+            The id of the penalty
+
+        Returns
+        -------
+        Optional[Penalty]
+            If successful, the penalty, else None
+        """
+
         return await self._fetch("penalty", Penalty, {"id": id})
 
     @caching_property
@@ -359,6 +578,27 @@ class AioMKClient:
         include_deleted: bool = False,
         season: Optional[int] = None,
     ) -> list[Penalty]:
+        """Gets a list of penalties from the api
+
+        Parameters
+        ----------
+        name : str
+            The name of the player who got the penalty
+        is_strike : Optional[bool], optional
+            If True, only get strikes
+        after : Optional[datetime], optional
+            The date to get the penalties after, by default None. Timezone is UTC.
+        include_deleted : bool, optional
+            If True, include deleted penalties, by default False
+        season : Optional[int], optional
+            The season to get the penalties from, by default None
+
+        Returns
+        -------
+        list[Penalty]
+            If successful, the penalties, else empty list
+        """
+
         params = {
             "name": name,
             "includeDeleted": str(include_deleted),
