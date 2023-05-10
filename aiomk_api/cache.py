@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 P = ParamSpec("P")
-Key: TypeAlias = tuple[tuple[Any, ...], frozenset[tuple[str, Any]]]
+Key: TypeAlias = tuple[tuple[Any, ...], frozenset[tuple[str, Any]], str]
 
 
 class Cache:
