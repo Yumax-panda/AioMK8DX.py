@@ -35,6 +35,7 @@ from typing import (
     TypeVar,
     Union
 )
+from itertools import zip_longest
 
 from .cache import Cache, caching_property
 
@@ -180,6 +181,42 @@ class AioMKClient:
             params["season"] = season
 
         return await self._fetch("player", Player, params)
+
+    @caching_property
+    async def get_players(
+        self,
+        ids: list[int] = [],
+        names: list[str] = [],
+        mkc_ids: list[int] = [],
+        discord_ids: list[int] = [],
+        fcs: list[str] = [],
+        season: int = None,
+    ) -> list[Optional[Player]]:
+        params_list = []
+
+        for id, name, mkc_id, discord_id, fc in zip_longest(
+            ids,
+            names,
+            mkc_ids,
+            discord_ids,
+            fcs,
+        ):
+            params = {}
+            if id is not None:
+                params["id"] = id
+            elif name is not None:
+                params["name"] = name
+            elif mkc_id is not None:
+                params["mkcId"] = mkc_id
+            elif discord_id is not None:
+                params["discordId"] = discord_id
+            elif fc is not None:
+                params["fc"] = fc
+
+            if season is not None:
+                params["season"] = season
+            params_list.append(params)
+        return await self._fetch_many("player", Player, params_list)
 
     @caching_property
     async def get_player_details(
