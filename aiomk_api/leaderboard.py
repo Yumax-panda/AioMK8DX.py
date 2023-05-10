@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 from .player import LeaderBoardPlayer
 from .utils import _DictBased
@@ -57,6 +57,15 @@ class LeaderBoard(_DictBased):
 
     def __len__(self) -> int:
         return len(self.data)
+
+    def __contains__(self, item: LeaderBoardPlayer) -> bool:
+        return item in self.data
+
+    def __getitem__(self, __index: int) -> LeaderBoardPlayer:
+        return self.data[__index]
+
+    def __iter__(self) -> Iterator[LeaderBoardPlayer]:
+        return iter(self.data)
 
     def to_dict(self) -> LeaderBoardPayload:
         return {

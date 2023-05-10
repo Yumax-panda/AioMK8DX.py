@@ -24,6 +24,7 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
+from aiomk_api.utils import Search
 import aiomk_api
 import pytest
 
@@ -58,3 +59,14 @@ async def test_get_player_list():
         players_empty = await client.get_player_list(min_mmr=20000)
     assert len(players) == 11
     assert len(players_empty) == 0
+
+@pytest.mark.asyncio
+async def test_get_leaderboard():
+    async with aiomk_api.AioMKClient() as client:
+        leaderboard = await client.get_leaderboard(8, min_mmr=16000)
+        leaderboard_empty = await client.get_leaderboard(8, min_mmr=20000)
+        s = Search(discord_id=915185563638833173)
+        leaderboard_search = await client.get_leaderboard(8, search=s)
+    assert len(leaderboard) == 11
+    assert len(leaderboard_empty) == 0
+    assert leaderboard_search[0].name == "Azure_mk"
