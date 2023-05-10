@@ -62,12 +62,12 @@ def caching_property(coro: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, C
 
     Parameters
     ----------
-    coro: CoroutineFunc
+    coro: Callable
         The coroutine to cache.
 
     Returns
     -------
-    CoroutineFunc
+    Callable
         The coroutine with caching.
     """
 
