@@ -24,7 +24,6 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from typing import (
     Callable,
     Type,
@@ -47,7 +46,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="LeaderBoard")
 
 
-class LeaderBoard(_DictBased, Sequence):
+class LeaderBoard(_DictBased):
     """Represents a LeaderBoard.
 
     .. container:: operations
