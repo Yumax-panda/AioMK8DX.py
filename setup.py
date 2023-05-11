@@ -13,7 +13,7 @@ packages = [
 
 if __name__ == "__main__":
     setup(
-        name="aiomk8xdx",
+        name="aiomk8dx",
         author="Yumax-panda",
         url="https://github.com/Yumax-panda/aiomk_api",
         use_scm_version=True,
