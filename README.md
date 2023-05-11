@@ -19,7 +19,7 @@ pip install git+https://github.com/Yumax-panda/AioMK8DX.py.git
 
 ```py
 
-from aiomk_api import AioMKClient
+from aiomk8dx import AioMKClient
 import asyncio
 
 async def main():
