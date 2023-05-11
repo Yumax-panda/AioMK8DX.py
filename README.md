@@ -12,7 +12,7 @@ An API wrapper for MK8DX 150cc Lounge written in Python.
 ## Installation
 
 ```sh
-pip install git+https://github.com/Yumax-panda/aiomk_api.git
+pip install git+https://github.com/Yumax-panda/AioMK8DX.py.git
 ```
 
 ## Example
