@@ -24,7 +24,13 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING, Union
+from typing import (
+    Optional,
+    Type,
+    TypeVar,
+    TYPE_CHECKING,
+    Union
+)
 
 
 __all__ = (
@@ -32,6 +38,8 @@ __all__ = (
     "Search",
     "_to_camel"
 )
+
+T = TypeVar("T", bound="_DictBased")
 
 
 class _DictBased:
@@ -50,8 +58,38 @@ class _DictBased:
 
         raise NotImplementedError
 
+    def _update(self, data: dict) -> None:
+        """Updates this object with the given data.
+
+        Parameters
+        ----------
+        data: dict
+            The data to update this object with.
+        """
+
+        raise NotImplementedError
+
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.to_dict()}>"
+
+    @classmethod
+    def copy(cls: Type[T], self: T) -> T:
+        """Copies this object.
+
+        Parameters
+        ----------
+        cls : Type[T]
+            The class of the object.
+        self : T
+            The object to copy.
+
+        Returns
+        -------
+        T
+            The copied object.
+        """
+
+        return cls._update(self.to_dict())
 
 
 class Search:

@@ -24,7 +24,15 @@ DEALINGS IN THE SOFTWARE.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Sequence
+from typing import (
+    Callable,
+    Type,
+    TypeVar,
+    TYPE_CHECKING,
+    Iterator,
+    Optional
+)
 
 from .player import LeaderBoardPlayer
 from .utils import _DictBased
@@ -36,8 +44,45 @@ __all__ = (
 if TYPE_CHECKING:
     from .types.leaderboard import LeaderBoard as LeaderBoardPayload
 
+T = TypeVar("T", bound="LeaderBoard")
 
-class LeaderBoard(_DictBased):
+
+class LeaderBoard(_DictBased, Sequence):
+    """Represents a LeaderBoard.
+
+    .. container:: operations
+
+        .. describe:: x == y
+
+            Checks if two LeaderBoards are equal.
+
+        .. describe:: len(x)
+
+            Returns the number of players in the LeaderBoard.
+
+        .. describe:: x[y]
+
+            Returns the player at the specified index.
+
+        .. describe:: contains x
+
+            Checks if a player is in the LeaderBoard.
+
+        .. describe:: bool(x)
+
+            Checks if the LeaderBoard is not empty.
+
+        .. describe:: iter(x)
+
+            Returns an iterator for the LeaderBoard.
+
+    Attributes
+    ----------
+    total_players: int
+        The total number of players in the LeaderBoard.
+    data: list[LeaderBoardPlayer]
+        The players in the LeaderBoard.
+    """
 
     __slots__ = (
         "total_players",
@@ -78,3 +123,59 @@ class LeaderBoard(_DictBased):
             "totalPlayers": self.total_players,
             "data": [x.to_dict() for x in self.data]
         }
+
+    @classmethod
+    def _create(cls: Type[T], players: list[LeaderBoardPlayer]) -> T:
+        """Creates a LeaderBoard object.
+
+        Parameters
+        ----------
+        cls : Type[T]
+            The class to create an instance of.
+        players : list[LeaderBoardPlayer]
+            The players to create the LeaderBoard with.
+
+        Returns
+        -------
+        T
+            The LeaderBoard object created.
+        """
+
+        self = cls.__new__(cls) # bypass __init__
+
+        self.total_players = len(players)
+        self.data = [p.copy() for p in players]
+        return self
+
+
+    def find(self, predicate: Callable[[LeaderBoardPlayer], bool]) -> Optional[LeaderBoardPlayer]:
+        """Find a player in the LeaderBoard.
+
+        Parameters
+        ----------
+        predicate: Callable[[LeaderBoardPlayer], bool]
+            A function that takes a LeaderBoardPlayer and returns a bool.
+
+        Returns
+        -------
+        Optional[LeaderBoardPlayer]
+            The player found, or None if not found.
+        """
+
+        return next((x for x in self.data if predicate(x)), None)
+
+    def find_all(self, predicate: Callable[[LeaderBoardPlayer], bool]) -> LeaderBoardPlayer:
+        """Find all players in the LeaderBoard.
+
+        Parameters
+        ----------
+        predicate: Callable[[LeaderBoardPlayer], bool]
+            A function that takes a LeaderBoardPlayer and returns a bool.
+
+        Returns
+        -------
+        list[LeaderBoardPlayer]
+            The players found.
+        """
+
+        return LeaderBoard._create([x for x in self.data if predicate(x)])
