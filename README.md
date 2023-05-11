@@ -1,4 +1,4 @@
-# Aiomk-API
+# AioMK8DX
 
 An API wrapper for MK8DX 150cc Lounge written in Python.
 

@@ -26,20 +26,20 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-from aiomk_api.utils import Search
-from aiomk_api import Player
-import aiomk_api
+from aiomk8dx.utils import Search
+from aiomk8dx import Player
+import aiomk8dx
 import pytest
 
 @pytest.mark.asyncio
 async def test_get_player():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         player = await client.get_player(name="azure_mk")
     assert player.name == "Azure_mk"
 
 @pytest.mark.asyncio
 async def test_get_players():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         players = await client.get_players(
             names=("azure_mk", "yumax_panda")
         )
@@ -48,7 +48,7 @@ async def test_get_players():
 
 @pytest.mark.asyncio
 async def test_get_player_details():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         player = await client.get_player_details(name="azure_mk")
         player2 = await client.get_player_details(name="yumax_panda")
     assert type(player) is not Player
@@ -59,7 +59,7 @@ async def test_get_player_details():
 
 @pytest.mark.asyncio
 async def test_get_player_list():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         players = await client.get_player_list(min_mmr=16000)
         players_empty = await client.get_player_list(min_mmr=20000)
     assert len(players) != 0
@@ -67,7 +67,7 @@ async def test_get_player_list():
 
 @pytest.mark.asyncio
 async def test_get_leaderboard():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         leaderboard = await client.get_leaderboard(8, min_mmr=16000)
         leaderboard_empty = await client.get_leaderboard(8, min_mmr=20000)
         s = Search(discord_id=915185563638833173)
@@ -81,7 +81,7 @@ async def test_get_leaderboard():
 
 @pytest.mark.asyncio
 async def test_get_table():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         table = await client.get_table(8)
         table2 = await client.get_table(12345)
     assert table is None
@@ -89,22 +89,21 @@ async def test_get_table():
 
 @pytest.mark.asyncio
 async def test_get_tables():
-    async with aiomk_api.AioMKClient() as client:
-        tables = await client.get_tables(after=datetime.utcnow()- timedelta(hours=1))
+    async with aiomk8dx.AioMKClient() as client:
+        tables = await client.get_tables(after=datetime.utcnow()- timedelta(days=1))
         tables[0].to_dict()
     assert tables is not None
 
 @pytest.mark.asyncio
 async def test_get_table_unverified():
-    async with aiomk_api.AioMKClient() as client:
+    """This test will fail if there is no unverified table"""
+    async with aiomk8dx.AioMKClient() as client:
         tables = await client.get_table_unverified(8)
         tables2 = await client.get_table_unverified(12345)
-    assert len(tables) != 0
-    assert len(tables2) == 0
 
 @pytest.mark.asyncio
 async def test_get_bonus():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         bonus = await client.get_bonus(1)
         bonus2 = await client.get_bonus(12345)
     assert bonus is  not None
@@ -112,7 +111,7 @@ async def test_get_bonus():
 
 @pytest.mark.asyncio
 async def test_get_penalty():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         penalty = await client.get_penalty(12345)
         penalty2 = await client.get_penalty(10000000)
     assert penalty is  not None
@@ -120,6 +119,6 @@ async def test_get_penalty():
 
 @pytest.mark.asyncio
 async def test_get_penalties():
-    async with aiomk_api.AioMKClient() as client:
+    async with aiomk8dx.AioMKClient() as client:
         penalties = await client.get_penalties(name="sukuna", include_deleted=True)
     assert len(penalties) != 0

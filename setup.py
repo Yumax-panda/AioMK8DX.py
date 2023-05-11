@@ -7,13 +7,13 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 packages = [
-    "aiomk_api",
-    "aiomk_api.types"
+    "aiomk8dx",
+    "aiomk8dx.types"
 ]
 
 if __name__ == "__main__":
     setup(
-        name="aiomk_api",
+        name="aiomk8xdx",
         author="Yumax-panda",
         url="https://github.com/Yumax-panda/aiomk_api",
         use_scm_version=True,

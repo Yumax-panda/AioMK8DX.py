@@ -27,7 +27,7 @@ from __future__ import annotations
 from dateutil.parser import isoparse
 from typing import Optional, TYPE_CHECKING
 
-from aiomk_api.types.change import _ChangeBase as _ChangeBasePayload
+from aiomk8dx.types.change import _ChangeBase as _ChangeBasePayload
 
 from .utils import _DictBased, _to_camel
 
