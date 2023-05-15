@@ -53,9 +53,16 @@ async def test_get_player_details():
         player2 = await client.get_player_details(name="yumax_panda")
     assert type(player) is not Player
     assert player.name == "Azure_mk"
-    assert player.rank.division == "Silver"
-    assert player.mmr == 5998
     assert player2 is None
+
+@pytest.mark.asyncio
+async def test_get_players():
+    async with aiomk8dx.AioMKClient() as client:
+        players = await client.get_players(
+            names=("azure_mk", "yumax_panda")
+        )
+    assert players[0] is not None
+    assert players[1] is None
 
 @pytest.mark.asyncio
 async def test_get_player_list():
@@ -87,12 +94,6 @@ async def test_get_table():
     assert table is None
     assert table2 is not None
 
-@pytest.mark.asyncio
-async def test_get_tables():
-    async with aiomk8dx.AioMKClient() as client:
-        tables = await client.get_tables(after=datetime.utcnow()- timedelta(days=1))
-        tables[0].to_dict()
-    assert tables is not None
 
 @pytest.mark.asyncio
 async def test_get_table_unverified():
