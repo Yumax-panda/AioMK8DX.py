@@ -50,7 +50,7 @@ Key: TypeAlias = tuple[tuple[Any, ...], frozenset[tuple[str, Any]], str]
 class Cache:
     data: dict[Key, Any] = {}
 
-    def put(self, key: Key, value: object) -> Any:
+    def put(self, key: Key, value: object) -> None:
         self.data[key] = value
 
 
