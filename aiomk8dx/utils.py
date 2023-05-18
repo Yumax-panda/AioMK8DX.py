@@ -25,21 +25,27 @@ DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
 from typing import (
+    Any,
+    Callable,
+    Generic,
     Optional,
     Type,
     TypeVar,
     TYPE_CHECKING,
-    Union
+    Union,
+    overload
 )
 
 
 __all__ = (
     "_DictBased",
     "Search",
-    "_to_camel"
+    "_to_camel",
+    "cached_slot_property"
 )
 
-T = TypeVar("T", bound="_DictBased")
+T = TypeVar("T")
+T_co = TypeVar("T_co", covariant=True)
 
 
 class _DictBased:
@@ -171,3 +177,56 @@ def _to_camel(string: str) -> str:
     """
 
     return "".join(word.capitalize() for word in string.split("_"))
+
+
+class CachedSlotProperty(Generic[T, T_co]):
+
+    __slots__ = (
+        "name",
+        "function",
+        "__doc__"
+    )
+
+    def __init__(self, name: str, function: Callable[[T], T_co]) -> None:
+        self.name = name
+        self.function = function
+        self.__doc__ = getattr(function, "__doc__")
+
+    @overload
+    def __get__(self, instance: None, owner: Type[T]) -> CachedSlotProperty[T, T_co]:
+        ...
+
+    @overload
+    def __get__(self, instance: T, owner: Type[T]) -> T_co:
+        ...
+
+    def __get__(self, instance: Optional[T], owner: Type[T]) -> Any:
+        if instance is None:
+            return self
+
+        try:
+            return getattr(instance, self.name)
+        except AttributeError:
+            value = self.function(instance)
+            setattr(instance, self.name, value)
+            return value
+
+
+def cached_slot_property(name: str) -> Callable[[Callable[[T], T_co]], CachedSlotProperty[T, T_co]]:
+    """Creates a cached slot property.
+
+    Parameters
+    ----------
+    name: str
+        The name of the slot.
+
+    Returns
+    -------
+    Callable[[Callable[[T], T_co]], CachedSlotProperty[T, T_co]]
+        The created property.
+    """
+
+    def decorator(function: Callable[[T], T_co]) -> CachedSlotProperty[T, T_co]:
+        return CachedSlotProperty(name, function)
+
+    return decorator
