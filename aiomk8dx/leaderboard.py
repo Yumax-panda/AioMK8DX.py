@@ -112,10 +112,14 @@ class LeaderBoard(_DictBased):
     def __getitem__(self, __index: SupportsIndex) -> LeaderBoardPlayer:
         ...
     @overload
-    def __getitem__(self, __index: slice) -> list[LeaderBoardPlayer]:
+    def __getitem__(self, __index: slice) -> LeaderBoard:
         ...
-    def __getitem__(self, __index: Union[SupportsIndex, slice]) -> Union[LeaderBoardPlayer, list[LeaderBoardPlayer]]:
-        return self.data[__index]
+    def __getitem__(self, __index: Union[SupportsIndex, slice]) -> Union[LeaderBoardPlayer, LeaderBoard]:
+
+        if isinstance(__index, slice):
+            return LeaderBoard._create(self.data[__index])
+        else:
+            return self.data[__index]
 
     def __iter__(self) -> Iterator[LeaderBoardPlayer]:
         return iter(self.data)
