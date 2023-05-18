@@ -30,7 +30,10 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
     Iterator,
-    Optional
+    Optional,
+    SupportsIndex,
+    Union,
+    overload
 )
 
 from .player import LeaderBoardPlayer
@@ -105,7 +108,13 @@ class LeaderBoard(_DictBased):
     def __contains__(self, item: LeaderBoardPlayer) -> bool:
         return item in self.data
 
-    def __getitem__(self, __index: int) -> LeaderBoardPlayer:
+    @overload
+    def __getitem__(self, __index: SupportsIndex) -> LeaderBoardPlayer:
+        ...
+    @overload
+    def __getitem__(self, __index: slice) -> list[LeaderBoardPlayer]:
+        ...
+    def __getitem__(self, __index: Union[SupportsIndex, slice]) -> Union[LeaderBoardPlayer, list[LeaderBoardPlayer]]:
         return self.data[__index]
 
     def __iter__(self) -> Iterator[LeaderBoardPlayer]:
