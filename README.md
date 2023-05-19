@@ -7,7 +7,6 @@ An API wrapper for MK8DX 150cc Lounge written in Python.
 - Easy to use
 - Asynchronous
 - Supports all endpoints available to the general user
-- Almost all objects get cached
 
 ## Installation
 
