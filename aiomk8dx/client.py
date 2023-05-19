@@ -170,7 +170,7 @@ class AioMKClient:
 
         return [cls(data) if data is not None else None for data in results]
 
-    @caching_property
+
     async def get_player(
         self,
         id: Optional[int] = None,
@@ -283,7 +283,7 @@ class AioMKClient:
             params_list.append(params)
         return await self._fetch_many("player", Player, params_list, return_exceptions=return_exceptions)
 
-    @caching_property
+
     async def get_player_details(
         self,
         id: Optional[int] = None,
@@ -319,7 +319,7 @@ class AioMKClient:
 
         return await self._fetch("player/details", PlayerDetails, params)
 
-    @caching_property
+
     async def get_player_list(
         self,
         min_mmr: Optional[int] = None,
@@ -356,7 +356,7 @@ class AioMKClient:
         else:
             return [PartialPlayer(player) for player in data["players"]]
 
-    @caching_property
+
     async def get_leaderboard(
         self,
         season: int,
@@ -431,7 +431,7 @@ class AioMKClient:
 
         return await self._fetch("player/leaderboard", LeaderBoard, params)
 
-    @caching_property
+
     async def get_table(self, table_id: int) -> Optional[Table]:
         """Gets a table from the api
 
@@ -447,7 +447,7 @@ class AioMKClient:
         """
         return await self._fetch("table", Table, {"tableId": table_id})
 
-    @caching_property
+
     async def get_tables(
         self,
         after: Optional[datetime] = None,
@@ -484,7 +484,7 @@ class AioMKClient:
         else:
             return [Table(table) for table in data]
 
-    @caching_property
+
     async def get_table_unverified(self, season: Optional[int] = None) -> list[Table]:
         """Gets a list of unverified tables from the api
 
@@ -509,7 +509,7 @@ class AioMKClient:
         else:
             return [Table(table) for table in data]
 
-    @caching_property
+
     async def get_bonus(self, id: int) -> Optional[Bonus]:
         """Gets a bonus from the api
 
@@ -525,7 +525,7 @@ class AioMKClient:
         """
         return await self._fetch("bonus", Bonus, {"id": id})
 
-    @caching_property
+
     async def get_bonuses(self, name: str, season: Optional[int] = None) -> list[Bonus]:
         """Gets a list of bonuses from the api
 
@@ -552,7 +552,7 @@ class AioMKClient:
         else:
             return [Bonus(bonus) for bonus in data]
 
-    @caching_property
+
     async def get_penalty(self, id: int) -> Optional[Penalty]:
         """Gets a penalty from the api
 
@@ -569,7 +569,7 @@ class AioMKClient:
 
         return await self._fetch("penalty", Penalty, {"id": id})
 
-    @caching_property
+
     async def get_penalties(
         self,
         name: str,
